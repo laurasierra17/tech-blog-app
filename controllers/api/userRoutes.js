@@ -18,3 +18,34 @@ router.post('/', async (req, res) => {
         res.status(500).json(err);
     }
 });
+
+// Handles user's login = inputs from the login form
+router.post('/login', async (req, res) => {
+    try {
+        // Verify user exists in the databse
+        const userData = await User.findOne({ where: { username: req.body.username } });
+    
+        // User is not in the database
+        if (!userData) {
+            res.status(400).json({ message: "User doesn't exist" });
+            return;
+        }
+    
+        // Verify the password is correct
+        const validPassword = await userData.checkPassword(req.body.password);
+        if (!validPassword) {
+            res.status(400).json({ message: "Incorrect password, please try again" });
+        }
+    
+        // Save session
+        req.session.save(() => {
+            req.session.user_id = userData.id;
+            req.session.logged_in = true;
+    
+            res.json({ user: userData, message: "You are now logged in!" });
+        });
+
+    } catch (err) {
+        res.status(400).json(err);
+    }
+});
