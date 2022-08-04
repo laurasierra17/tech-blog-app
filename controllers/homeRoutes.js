@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { User, Post } = require('../models');
+const { User, Post, Comment } = require('../models');
 const withAuth = require('../utils/auth');
 
 // Gets all posts and JOIN with user data. This will be used on the frontend to display all posts in the Home
@@ -42,12 +42,36 @@ router.get('/post/:id', async (req, res) => {
         });
         const post = postData.get({ plain: true });
 
-        // res.render('project', {
+        // res.render('post', {
         //     ...project,
         //     logged_in: req.session.logged_in
         //   });
 
         res.status(200).json(post);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
+// Runs when the logged in user wants to leave a comment in a post
+router.post('/post/:id', withAuth, async (req, res) => {
+    try {
+        // Create a Comment row
+        const commentData = await Comment.create({
+            ...req.body,
+            post_id: req.params.id,
+            user_id: req.session.user_id
+        })
+
+        const comment = commentData.get({ plain: true });
+
+        // Sending over our user's comment to the frontend
+        // res.render('post', {
+        //     ...comment,
+        //     logged_in: true
+        // });
+
+        // req.status(200).json(commentData)
     } catch (err) {
         res.status(500).json(err);
     }
