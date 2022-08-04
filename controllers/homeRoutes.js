@@ -87,10 +87,10 @@ router.get('/dashboard', withAuth, async (req, res) => {
         const user = userData.get({ plain: true });
 
         // Sending over our user's posts to the frontend
-        // res.render('dashboard', {
-        //     ...user,
-        //     logged_in: true
-        // });
+        res.render('dashboard', {
+            ...user,
+            logged_in: true
+        });
 
     } catch (err) {
         res.status(500).json(err);
