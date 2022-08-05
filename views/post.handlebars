@@ -2,18 +2,32 @@
     <div>
         <div>
             <h2><a href="/post/{{id}}">{{title}}</a></h2>
-            <p>Posted by {{username}} on {{format_date date_created}}</p>
+            <p>Posted by {{user.username}} on {{format_date date_created}}</p>
         </div>
         <div>
             <p>{{content}}</p>
         </div>
-        {{!-- If the user is logged in, allow them to write a comment --}}
-        {{#if logged_in}}
-        <form>
-            <label for="comment" class="form-label">Comment</label>
-            <input type="text" id="comment" class="form-control">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        {{/if}}
+        {{!-- If the user leaves a comment or if there already is a comment --}}
+        {{#if comment}}
+        <div>
+            <div>
+                <p>{{comment.content}}</p>
+            </div>
+            <div>
+                <p>- {{commentUser}}, {{format_date comment.date_created}}</p>
+            </div>
+        </div>
     </div>
 </div>
+{{!-- If the user is logged in, allow them to write a comment --}}
+{{else}}
+<form class="form comment-form">
+    <label for="comment" class="form-label">Comment</label>
+    <input type="text" id="comment" class="form-control" id="comment">
+    <button type="submit" class="btn btn-primary" data-id="{{id}}">Submit</button>
+</form>
+
+</div>
+</div>
+<script src="/js/comment.js"></script>
+{{/if}}

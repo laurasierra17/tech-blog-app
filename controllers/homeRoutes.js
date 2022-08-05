@@ -27,21 +27,31 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get the post the user selected from Home to display
+// Get the post the user selected from Home to display and respective comments
 router.get('/post/:id', async (req, res) => {
     try {
+        // Get post info
         const postData = await Post.findByPk(req.params.id, {
             include: [
                 {
                     model: User,
                     attributes: ['username']
+                },
+                {
+                    model: Comment,
+                    attributes: ['content', 'date_created', 'user_id']
                 }
             ]
         });
         const post = postData.get({ plain: true });
 
+        // Get name of the user id linked to the Comment
+        const commentUserData = await User.findByPk(post.comment.user_id);
+        const commentUser = commentUserData.get({ plain: true });
+
         res.render('post', {
             ...post,
+            commentUser: commentUser.username,
             logged_in: req.session.logged_in
           });
     } catch (err) {
@@ -51,6 +61,7 @@ router.get('/post/:id', async (req, res) => {
 
 // Runs when the logged in user wants to leave a comment in a post
 router.post('/post/:id', withAuth, async (req, res) => {
+    console.log("req body", req.body)
     try {
         // Create a Comment row
         const commentData = await Comment.create({
@@ -60,14 +71,15 @@ router.post('/post/:id', withAuth, async (req, res) => {
         })
 
         const comment = commentData.get({ plain: true });
+        console.log(comment)
 
         // Sending over our user's comment to the frontend
-        res.render('post', {
-            ...comment,
-            logged_in: true
-        });
-
-        // req.status(200).json(commentData)
+        // res.render('post', {
+        //     ...comment,
+        //     logged_in: true
+        // });
+        res.redirect('/post/:id');
+        req.status(200).json(comment)
     } catch (err) {
         res.status(500).json(err);
     }
