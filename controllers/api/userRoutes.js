@@ -6,7 +6,7 @@ router.post('/', async (req, res) => {
     try {
         // We're creating a new User row with the information from the form (username and password)
         const newUser = await User.create(req.body);
-        
+
         // Save this user's information in the sessions to mark them as logged in
         req.session.save(() => {
             req.session.user_id = newUser.id,
@@ -24,25 +24,26 @@ router.post('/login', async (req, res) => {
     try {
         // Verify user exists in the databse
         const userData = await User.findOne({ where: { username: req.body.username } });
-    
+        
         // User is not in the database
         if (!userData) {
             res.status(400).json({ message: "User doesn't exist" });
             return;
         }
-    
+        
         // Verify the password is correct
         const validPassword = await userData.checkPassword(req.body.password);
         if (!validPassword) {
             res.status(400).json({ message: "Incorrect password, please try again" });
+            return;
         }
-    
+        
         // Save session
         req.session.save(() => {
             req.session.user_id = userData.id;
             req.session.logged_in = true;
     
-            res.json({ user: userData, message: "You are now logged in!" });
+            res.json({ message: "You are now logged in!" });
         });
 
     } catch (err) {
