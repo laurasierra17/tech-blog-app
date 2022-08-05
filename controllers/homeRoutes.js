@@ -62,7 +62,6 @@ router.get('/post/:id', async (req, res) => {
               });
         }
     } catch (err) {
-        console.log(err)
         res.status(500).json(err);
     }
 });
@@ -79,8 +78,6 @@ router.post('/post/:id', withAuth, async (req, res) => {
 
         const comment = commentData.get({ plain: true });
 
-        // res.redirect('/post/:id');
-        // res.redirect(req.get('referer'))
         res.status(200).json(comment)
     } catch (err) {
         console.log(err)

@@ -1,3 +1,4 @@
+// Save user input as a comment
 const commentFormHandler = async (event) => {
     event.preventDefault();
 

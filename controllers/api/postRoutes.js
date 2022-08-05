@@ -5,6 +5,29 @@ const withAuth = require('../../utils/auth');
 // Always confirm the user is logged in
 router.use(withAuth);
 
+// Get all user's posts
+router.get('/', async (req, res) => {
+    try {
+        // Find all posts of User
+        const userPostsData = await Post.findAll({
+            where: {
+                user_id: req.session.logged_in
+            }
+        });
+
+        // Serialize data so the template can read it
+        const posts = userPostsData.map(post => post.get({ plain: true }));
+
+        // Pass serialized data and session flag into template
+        res.render('dashboard', {
+            posts,
+            logged_in: req.session.logged_in
+        });
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
+
 // Save the user's newly created post
 router.post('/', async (req, res) => {
     try {
