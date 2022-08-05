@@ -1,8 +1,13 @@
-{{#each posts as |post|}}
+<div class="dashboard">
+    {{#each posts as |post|}}
     <div>
-        <h2><a href=`/post/{{id}}` class="list-group-item list-group-item-action">{{title}}</a></h2>
+        <h2><a href="/post/{{id}}" class="list-group-item list-group-item-action">{{title}}</a></h2>
     </div>
-{{/each}}
-<form>
-    <button type="submit" class="btn btn-primary">+ New Post</button>
-</form>
+    {{/each}}
+    <form class="new-post-form">
+        <button type="submit" class="btn btn-primary" id="new-post-btn">+ New Post</button>
+    </form>
+
+</div>
+
+<script src="./js/dashboard.js"></script>
