@@ -31,7 +31,7 @@ Comment.init(
         },
         user_id: {
             type: DataTypes.INTEGER,
-            reerences: {
+            references: {
                 model: 'user',
                 key: 'id'
             }

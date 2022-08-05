@@ -22,6 +22,9 @@ const commentFormHandler = async (event) => {
         }
 
     }
+
+    // Refresh the page
+    window.location.reload();
 }
 
 document

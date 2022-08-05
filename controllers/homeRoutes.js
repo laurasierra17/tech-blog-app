@@ -46,41 +46,44 @@ router.get('/post/:id', async (req, res) => {
         const post = postData.get({ plain: true });
 
         // Get name of the user id linked to the Comment
-        const commentUserData = await User.findByPk(post.comment.user_id);
-        const commentUser = commentUserData.get({ plain: true });
-
-        res.render('post', {
-            ...post,
-            commentUser: commentUser.username,
-            logged_in: req.session.logged_in
-          });
+        if (post.comment) {
+            const commentUserData = await User.findByPk(post.comment.user_id);
+            const commentUser = commentUserData.get({ plain: true });
+    
+            res.render('post', {
+                ...post,
+                commentUser: commentUser.username,
+                logged_in: req.session.logged_in
+              });
+        } else {
+            res.render('post', {
+                ...post,
+                logged_in: req.session.logged_in
+              });
+        }
     } catch (err) {
+        console.log(err)
         res.status(500).json(err);
     }
 });
 
 // Runs when the logged in user wants to leave a comment in a post
 router.post('/post/:id', withAuth, async (req, res) => {
-    console.log("req body", req.body)
     try {
         // Create a Comment row
         const commentData = await Comment.create({
-            ...req.body,
-            post_id: req.params.id,
+            content: req.body.content,
+            post_id: parseInt(req.params.id),
             user_id: req.session.user_id
         })
 
         const comment = commentData.get({ plain: true });
-        console.log(comment)
 
-        // Sending over our user's comment to the frontend
-        // res.render('post', {
-        //     ...comment,
-        //     logged_in: true
-        // });
-        res.redirect('/post/:id');
-        req.status(200).json(comment)
+        // res.redirect('/post/:id');
+        // res.redirect(req.get('referer'))
+        res.status(200).json(comment)
     } catch (err) {
+        console.log(err)
         res.status(500).json(err);
     }
 });
