@@ -39,7 +39,6 @@ router.get('/post/:id', async (req, res) => {
             ]
         });
         const post = postData.get({ plain: true });
-        console.log("post data", post)
 
         res.render('post', {
             ...post,
@@ -63,10 +62,10 @@ router.post('/post/:id', withAuth, async (req, res) => {
         const comment = commentData.get({ plain: true });
 
         // Sending over our user's comment to the frontend
-        // res.render('post', {
-        //     ...comment,
-        //     logged_in: true
-        // });
+        res.render('post', {
+            ...comment,
+            logged_in: true
+        });
 
         // req.status(200).json(commentData)
     } catch (err) {
